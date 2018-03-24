@@ -42,6 +42,7 @@ supervisor>
 
 
 
+
 Web管理界面
 Supervisor Web管理界面
 出于安全考虑，默认配置是没有开启web管理界面，需要修改supervisord.conf配置文件打开http访权限，将下面的配置：
@@ -61,4 +62,55 @@ port：绑定访问IP和端口，这里是绑定的是本地IP和9001端口
 username：登录管理后台的用户名
 
 password：登录管理后台的密码
+
+
+
+
+
+ 配置supervisord开机启动
+
+a.在指定目录下创建文件supervisord.service
+
+vim /usr/lib/systemd/system/supervisord.service
+添加
+[Unit]
+Description=supervisor
+After=network.target
+[Service]
+Type=forking
+ExecStart=/usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+ExecStop=/usr/bin/supervisorctl $OPTIONS shutdown
+ExecReload=/usr/bin/supervisorctl $OPTIONS reload
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+[Install]
+WantedBy=multi-user.target
+
+修改文件权限为766
+chmod 766 supervisor.service
+
+设置开机启动
+systemctl enable supervisor.service
+systemctl daemon-reload
+验证是否为开机启动：
+systemctl is-enabled supervisord
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
