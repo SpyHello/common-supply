@@ -90,6 +90,9 @@ WantedBy=multi-user.target
 修改文件权限为766
 chmod 766 supervisor.service
 
+设置supervisord.conf中的
+nodaemon=true
+
 设置开机启动
 systemctl enable supervisor.service
 systemctl daemon-reload
