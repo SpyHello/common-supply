@@ -1,0 +1,64 @@
+安装supervisor
+
+# yum install python-setuptools
+# easy_install pip
+# pip install supervisor  -- 或者-- easy_install supervisor
+# mkdir /etc/supervisor/
+安装完成之后，在/etc/supervisor目录下生成配置文件
+# echo_supervisord_conf>/etc/supervisor/supervisord.conf
+
+
+修改supervisor配置文件
+vi /etc/supervisor/supervisord.conf
+把末尾的include前的‘；’去掉，添加配置文件
+[include]
+files = /etc/supervisor/conf.d/*.ini
+
+conf.d文件夹中的tomcat.ini配置文件如下
+[program:tomcat]
+command=/opt/apache-tomcat-8.0.35/bin/catalina.sh run
+stdout_logfile=/opt/apache-tomcat-8.0.35/logs/catalina.out
+autostart=true
+autorestart=true
+startsecs=5
+priority=1
+stopasgroup=true
+killasgroup=true
+
+supervisord -c /etc/supervisor/supervisord.conf 
+启动supervisor，即可完成程序的持续运行！
+运行 supervisorctl命令即可查看程序的运行状态
+[root@appadmin conf.d]# supervisorctl
+tomcat             RUNNING   pid 2375, uptime 0:26:40
+supervisor> 
+
+一些supervisor的常用命令
+重载supervisor
+进入supervisor 命令-->  #supervisorctl
+查看命令           -->  #help
+重载项目           -->  #reload
+查看状态           -->  #status
+完成！
+
+
+
+Web管理界面
+Supervisor Web管理界面
+出于安全考虑，默认配置是没有开启web管理界面，需要修改supervisord.conf配置文件打开http访权限，将下面的配置：
+
+;[inet_http_server]         ; inet (TCP) server disabled by default
+;port=127.0.0.1:9001        ; (ip_address:port specifier, *:port for all iface)
+;username=user              ; (default is no username (open server))
+;password=123               ; (default is no password (open server))
+
+[inet_http_server]         ; inet (TCP) server disabled by default
+port=0.0.0.0:9001          ; (ip_address:port specifier, *:port for all iface)
+username=user              ; (default is no username (open server))
+password=123               ; (default is no password (open server))
+
+port：绑定访问IP和端口，这里是绑定的是本地IP和9001端口
+
+username：登录管理后台的用户名
+
+password：登录管理后台的密码
+
